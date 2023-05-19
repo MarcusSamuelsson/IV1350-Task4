@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.ExternalSystems;
+import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Item;
 import main.se.kth.iv1350.model.Sale;
 
@@ -14,7 +16,7 @@ public class SaleTest {
     private ExternalSystems externalSystems;
 
     @BeforeEach
-    void setupForTest() {
+    void setupForTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         sale = new Sale();
         externalSystems = new ExternalSystems();
         item = externalSystems.getInventorySystem().getItemWithID(0, 2);
@@ -34,14 +36,14 @@ public class SaleTest {
     }
 
     @Test
-    void addItemTest() {
+    void addItemTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         sale.addItem(externalSystems.getInventorySystem().getItemWithID(1, 4));
         int result = sale.getSaleInfo().numberOfItemsInCart();
         assertEquals(2, result);
     }
 
     @Test
-    void addExistingItemTest() {
+    void addExistingItemTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         sale.addItem(externalSystems.getInventorySystem().getItemWithID(0, 4));
         int result = sale.getSaleInfo().numberOfItemsInCart();
         assertEquals(1, result);

@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.ExternalSystems;
+import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Printer;
 import main.se.kth.iv1350.model.Register;
 import main.se.kth.iv1350.model.Sale;
@@ -30,7 +32,7 @@ public class controllerTest {
     }
 
     @Test
-    void addItemTest() {
+    void addItemTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         sale = controller.startSale();
         controller.getItemWithID(0, 2);
         int result = sale.getSaleInfo().numberOfItemsInCart();
@@ -38,7 +40,7 @@ public class controllerTest {
     }
 
     @Test
-    void payTest() {
+    void payTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         sale = controller.startSale();
         sale.addItem(externalSystems.getInventorySystem().getItemWithID(0, 2));
         String paymentStatus = controller.pay(31.8);

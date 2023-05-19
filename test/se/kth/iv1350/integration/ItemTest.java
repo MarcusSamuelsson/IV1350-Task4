@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.ExternalSystems;
+import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Item;
 
 public class ItemTest {
@@ -13,7 +15,7 @@ public class ItemTest {
     Item item;
 
     @BeforeEach
-    void setupForTest() {
+    void setupForTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
         item = externalSystems.getInventorySystem().getItemWithID(0, 2);
     }
 
