@@ -4,7 +4,7 @@ import main.se.kth.iv1350.DTO.ItemDescriptionDTO;
 import main.se.kth.iv1350.model.SaleInfo;
 
 public class InventorySystem {
-    ItemDescriptionDTO[] items = new ItemDescriptionDTO[5];
+    ItemDescriptionDTO[] items = new ItemDescriptionDTO[6];
 
      /**
      * Constructor for InventorySystem that set some items in the system
@@ -19,17 +19,23 @@ public class InventorySystem {
     
     /**
      * Finds scanned item using id
+     * If item identifier is 5 a DatabaseUnreachableException is thrown.
+     * If the id is out of bounds the InvalidItemIdentifierException is thrown.
      * 
      * @param id is the identification number for the product
      * @param quantity the quantity of the scanned product
      * 
      * @return a new item with the from the id and the quantity or returns null if id is out of bounds
      */
-    public Item getItemWithID(int id, int quantity) {
-        if(id < items.length && items[id] != null)
-            return new Item(items[id], quantity);
+    public Item getItemWithID(int id, int quantity) throws InvalidItemIdentifierException, DatabaseUnreachableException {
+        if(id == 5)
+            throw new DatabaseUnreachableException("Database cannot be reached!");
 
-        return null;
+        if(id >= items.length)
+            throw new InvalidItemIdentifierException("Identifier " + id + "is not a valid id");
+            
+        
+        return new Item(items[id], quantity);
     }
 
     public void updateInventory(SaleInfo saleInfo) {

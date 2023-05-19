@@ -1,6 +1,8 @@
 package main.se.kth.iv1350.controller;
 
+import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.ExternalSystems;
+import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Item;
 import main.se.kth.iv1350.integration.Printer;
 import main.se.kth.iv1350.model.Register;
@@ -39,7 +41,7 @@ public class Controller {
      * @param id is the identification number for the product
      * @param quantity the quantity of the scanned product
      */
-    public String getItemWithID(int id, int quantity) {
+    public String getItemWithID(int id, int quantity) throws InvalidItemIdentifierException, DatabaseUnreachableException {
         Item item = externalSystems.getInventorySystem().getItemWithID(id, quantity);
         
         if(item != null){
