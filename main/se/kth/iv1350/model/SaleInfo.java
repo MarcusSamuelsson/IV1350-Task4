@@ -39,7 +39,8 @@ public class SaleInfo {
         String finalString = timeAndDate.getTimeAndDate() +"\nProducts | Quantity | Cost | VAT";
 
         for (int i = 0; i < items.size(); i++) {
-            finalString += "\n" + items.get(i).toString();
+            if(items.get(i) != null)
+                finalString += "\n" + items.get(i).toString();
         }
 
         return finalString;

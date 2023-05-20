@@ -7,12 +7,16 @@ import main.se.kth.iv1350.integration.Item;
 import main.se.kth.iv1350.integration.Printer;
 import main.se.kth.iv1350.model.Register;
 import main.se.kth.iv1350.model.Sale;
+import main.se.kth.iv1350.model.SaleObserver;
+import main.se.kth.iv1350.view.TotalRevenueFileOutput;
+import main.se.kth.iv1350.view.TotalRevenueView;
 
 public class Controller {
     ExternalSystems externalSystems;
     Register register;
     Printer printer;
     Sale sale;
+    SaleObserver[] sObs = {new TotalRevenueFileOutput(), new TotalRevenueView()};
 
     /**
      * Constructor to create a new instance of Controller
@@ -31,7 +35,7 @@ public class Controller {
      * Initiates the sale
      */
     public Sale startSale() {
-        sale = new Sale();
+        sale = new Sale(sObs);
         return sale;
     }
 

@@ -8,7 +8,11 @@ public class TimeAndDate {
 	Date date = new Date();
     String timeAndDate;
 
-    TimeAndDate() {
+    /**
+     * Constructior for inizilising the TimeAndDate.
+     * Formats the information.
+     */
+    public TimeAndDate() {
         timeAndDate = formatter.format(date);
     }
 

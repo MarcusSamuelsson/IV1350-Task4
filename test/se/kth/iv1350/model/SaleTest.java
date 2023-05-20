@@ -9,15 +9,19 @@ import main.se.kth.iv1350.integration.ExternalSystems;
 import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Item;
 import main.se.kth.iv1350.model.Sale;
+import main.se.kth.iv1350.model.SaleObserver;
+import main.se.kth.iv1350.view.TotalRevenueFileOutput;
+import main.se.kth.iv1350.view.TotalRevenueView;
 
 public class SaleTest {
     private Sale sale;
     private Item item;
     private ExternalSystems externalSystems;
+    private SaleObserver[] sObs = {new TotalRevenueFileOutput(), new TotalRevenueView()};
 
     @BeforeEach
     void setupForTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
-        sale = new Sale();
+        sale = new Sale(sObs);
         externalSystems = new ExternalSystems();
         item = externalSystems.getInventorySystem().getItemWithID(0, 2);
         sale.addItem(item);

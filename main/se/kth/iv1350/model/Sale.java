@@ -4,12 +4,14 @@ import main.se.kth.iv1350.DTO.ItemDescriptionDTO;
 import main.se.kth.iv1350.integration.Item;
 
 public class Sale {
-    SaleInfo saleInfo;
-    Payment payment;
+    final SaleInfo saleInfo;
+    final Payment payment;
+    final SaleObserver[] sObs;
 
-    public Sale() {
+    public Sale(SaleObserver[] sObs) {
         saleInfo = new SaleInfo();
         payment = new Payment();
+        this.sObs = sObs;
     }
 
     /** 
@@ -44,6 +46,8 @@ public class Sale {
     public String pay(double amount) {
         double change = payment.pay(amount);
 
+        notifyObserver();
+
         if(change < 0)
             return (change*-1.0) + "$ missing from payment";
         else
@@ -66,6 +70,14 @@ public class Sale {
      */
     public Payment getPayment() {
         return payment;
+    }
+
+    /**
+     * Updates the total sale revenue
+     */
+    private void notifyObserver() {
+        sObs[0].completedSale(payment.getTotalAmount());
+        sObs[1].completedSale(payment.getTotalAmount());
     }
 
     /**

@@ -1,5 +1,7 @@
 package main.se.kth.iv1350.view;
 
+import java.util.Random;
+
 import main.se.kth.iv1350.controller.Controller;
 import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
@@ -17,38 +19,37 @@ public class View {
     }
 
     /**
-     * Call the function to start a sale
-     */
-    public void startSale() {
-        System.out.println("Sale started:\n" + controller.startSale().toString() + "\n");
-    }
-
-    /**
-     * Finds scanned item using id, prints the items description
-     * and the running total.
+     * Runs through a simulation of the program
      * 
-     * @param id is the identification number for the product
-     * @param quantity the quantity of the scanned product
-     */
-    public void getItemWithID(int itemID, int quantity) throws InvalidItemIdentifierException, DatabaseUnreachableException {
-        System.out.println(controller.getItemWithID(itemID, quantity));
-    }
-
-    /**
-     * Calls the function in payment that applies the discount
+     * @throws InvalidItemIdentifierException if the item id does not correspond to an existing item.
      * 
-     * @param discount the discount in 0-100%
+     * @throws DatabaseUnreachableException if the Inventory system server is not possible to reach.
      */
-    public void checkAndApplyDiscount(int customerID) {
-        controller.checkForDiscount(customerID);
-    }
+    public void runSimulation() throws InvalidItemIdentifierException, DatabaseUnreachableException {
+        Random rand = new Random();
 
-    /**
-     * Resolves all the parts of the payment
-     * 
-     * @param amount the amount payed by the customer
-     */
-    public void pay(int amount) {
-        System.out.println(controller.pay(amount));
+        for(int i = 0; i < 4; i++) {
+            System.out.println("Sale started:\n" + controller.startSale().toString() + "\n");
+
+            try {
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 1));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 1));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 1));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 1));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 5));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 5));
+                System.out.println(controller.getItemWithID(rand.nextInt(5), 2));
+                System.out.println(controller.getItemWithID(5, 2));
+                //System.out.println(controller.getItemWithID(6, 2));
+            } catch (InvalidItemIdentifierException e) {
+                System.err.println("Invalid item identifier!");
+            } catch (DatabaseUnreachableException e) {
+                System.err.println("Database could not be reached! Please contact us at: needhelp@bigstore.com");
+            }
+        
+            controller.checkForDiscount(rand.nextInt(2));
+
+            System.out.println(controller.pay(800));
+        }
     }
 }
