@@ -1,22 +1,24 @@
 package main.se.kth.iv1350.controller;
 
+import java.util.logging.Logger;
+
 import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.ExternalSystems;
+import main.se.kth.iv1350.integration.FileLogger;
 import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Item;
 import main.se.kth.iv1350.integration.Printer;
 import main.se.kth.iv1350.model.Register;
 import main.se.kth.iv1350.model.Sale;
 import main.se.kth.iv1350.model.SaleObserver;
-import main.se.kth.iv1350.view.TotalRevenueFileOutput;
-import main.se.kth.iv1350.view.TotalRevenueView;
 
 public class Controller {
+    FileLogger logger;
     ExternalSystems externalSystems;
     Register register;
     Printer printer;
     Sale sale;
-    SaleObserver[] sObs = {new TotalRevenueFileOutput(), new TotalRevenueView()};
+    SaleObserver[] sObs;
 
     /**
      * Constructor to create a new instance of Controller
@@ -29,12 +31,14 @@ public class Controller {
         this.externalSystems = externalSystems;
         this.register = register;
         this.printer = printer;
+        this.logger = new FileLogger();
     }
 
     /**
      * Initiates the sale
      */
-    public Sale startSale() {
+    public Sale startSale(SaleObserver[] sObs) {
+        this.sObs = sObs;
         sale = new Sale(sObs);
         return sale;
     }
@@ -44,15 +48,25 @@ public class Controller {
      * 
      * @param id is the identification number for the product
      * @param quantity the quantity of the scanned product
+     * 
+     * @throws InvalidItemIdentifierException if the item id does not correspond to an existing item.
+     * 
+     * @throws DatabaseUnreachableException if the Inventory system server is not possible to reach.
      */
     public String getItemWithID(int id, int quantity) throws InvalidItemIdentifierException, DatabaseUnreachableException {
-        Item item = externalSystems.getInventorySystem().getItemWithID(id, quantity);
-        
-        if(item != null){
-            return "\n\n" + sale.addItem(item) + "\n\n";
-        }
+        Item item;
 
-        return "Item does not exists!\nRunning total: " + sale.getPayment().getTotalAmount();
+        try {
+            item = externalSystems.getInventorySystem().getItemWithID(id, quantity);
+        } catch (InvalidItemIdentifierException e) {
+            logger.log(e.getMessage());
+            throw new InvalidItemIdentifierException("Invalid item identifier!");
+        } catch (DatabaseUnreachableException e) {
+            logger.log(e.getMessage());
+            throw new DatabaseUnreachableException("Database could not be reached! Please contact us at: needhelp@bigstore.com");
+        }
+        
+        return "\n\n" + sale.addItem(item) + "\n\n";
     }
 
     /**

@@ -5,9 +5,11 @@ import java.util.Random;
 import main.se.kth.iv1350.controller.Controller;
 import main.se.kth.iv1350.integration.DatabaseUnreachableException;
 import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
+import main.se.kth.iv1350.model.SaleObserver;
 
 public class View {
     Controller controller;
+    SaleObserver[] sObs = {new TotalRevenueFileOutput(), new TotalRevenueView()};
 
     /**
      * Constructor to create a new instance of View
@@ -29,7 +31,7 @@ public class View {
         Random rand = new Random();
 
         for(int i = 0; i < 4; i++) {
-            System.out.println("Sale started:\n" + controller.startSale().toString() + "\n");
+            System.out.println("Sale started:\n" + controller.startSale(sObs).toString() + "\n");
 
             try {
                 System.out.println(controller.getItemWithID(rand.nextInt(5), 1));
@@ -39,12 +41,12 @@ public class View {
                 System.out.println(controller.getItemWithID(rand.nextInt(5), 5));
                 System.out.println(controller.getItemWithID(rand.nextInt(5), 5));
                 System.out.println(controller.getItemWithID(rand.nextInt(5), 2));
-                System.out.println(controller.getItemWithID(5, 2));
+                //System.out.println(controller.getItemWithID(5, 2));
                 //System.out.println(controller.getItemWithID(6, 2));
             } catch (InvalidItemIdentifierException e) {
-                System.err.println("Invalid item identifier!");
+                System.err.println(e.getMessage());
             } catch (DatabaseUnreachableException e) {
-                System.err.println("Database could not be reached! Please contact us at: needhelp@bigstore.com");
+                System.err.println(e.getMessage());
             }
         
             controller.checkForDiscount(rand.nextInt(2));

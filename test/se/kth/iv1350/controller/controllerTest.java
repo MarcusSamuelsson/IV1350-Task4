@@ -11,6 +11,9 @@ import main.se.kth.iv1350.integration.InvalidItemIdentifierException;
 import main.se.kth.iv1350.integration.Printer;
 import main.se.kth.iv1350.model.Register;
 import main.se.kth.iv1350.model.Sale;
+import main.se.kth.iv1350.model.SaleObserver;
+import main.se.kth.iv1350.view.TotalRevenueFileOutput;
+import main.se.kth.iv1350.view.TotalRevenueView;
 import main.se.kth.iv1350.controller.Controller;
 
 public class controllerTest {
@@ -19,21 +22,21 @@ public class controllerTest {
     Printer printer = new Printer();
     Sale sale;
     Controller controller;
+    SaleObserver[] sObs = {new TotalRevenueFileOutput(), new TotalRevenueView()};
 
     @BeforeEach
     void setupForTest() {
         controller = new Controller(externalSystems, register, printer);
+        sale = controller.startSale(sObs);
     }
 
     @Test
     void startSaleTest() {
-        Sale result = controller.startSale();
-        assertNotNull(result);
+        assertNotNull(sale);
     }
 
     @Test
     void addItemTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
-        sale = controller.startSale();
         controller.getItemWithID(0, 2);
         int result = sale.getSaleInfo().numberOfItemsInCart();
         assertEquals(1, result);
@@ -41,7 +44,6 @@ public class controllerTest {
 
     @Test
     void payTest() throws InvalidItemIdentifierException, DatabaseUnreachableException {
-        sale = controller.startSale();
         sale.addItem(externalSystems.getInventorySystem().getItemWithID(0, 2));
         String paymentStatus = controller.pay(31.8);
         assertEquals("Successful payment! Total change: 0.0$", paymentStatus);
@@ -49,7 +51,6 @@ public class controllerTest {
 
     @Test
     void applyDiscountTest() {
-        sale = controller.startSale();
         controller.checkForDiscount(40);
         double result = sale.getPayment().getDiscount();
         assertEquals(0.2, result);
